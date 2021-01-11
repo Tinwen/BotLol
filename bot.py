@@ -13,10 +13,8 @@ tableName = "PIPIGANG"
 
 urlOPGG = "https://euw.op.gg/summoner/userName="
 
-
 @bot.command()
 async def rank(ctx, *args):
-    global t
     msg = ""
     players = postgresql.getAllPseudo(tableName)
     if len(args) != 0:
@@ -24,8 +22,7 @@ async def rank(ctx, *args):
     elif len(players) == 0:
         msg = "No pseudo found in db add them before trying to do !rank"
     else:
-        for i in range(len(players)):
-            msg += lolRank.stats(players[i])
+        msg += sortByWinRate(players)
     await ctx.send(msg)
 
 
@@ -38,8 +35,7 @@ async def flex(ctx, *args):
     elif len(players) == 0:
         msg = "No pseudo found in db add them before trying to do !flex"
     else:
-        for i in range(len(players)):
-            msg += lolRank.stats(players[i], True)
+        msg += sortByWinRate(players, True)
 
     await ctx.send(msg)
 
@@ -105,5 +101,20 @@ async def h(ctx):
           "- !opgg <pseudo> => pseudo is optional"
     await ctx.send(msg)
 
+
+def sortByWinRate(pseudo, isFlex=False):
+    res = dict()
+    result = ""
+    for item in pseudo:
+        stats, winRate = lolRank.stats(item, isFlex)
+        res[stats] = winRate
+    res = {k: v for k, v in sorted(res.items(), key=lambda item: item[1])}
+    t = []
+    for item in list(res.items()):
+        t.append(item[0])
+    t.reverse()
+    for msg in t:
+        result += msg
+    return result
 
 bot.run(token)
