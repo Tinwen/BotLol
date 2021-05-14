@@ -1,6 +1,6 @@
 from riotwatcher import LolWatcher
 
-api_key = 'RGAPI-0816d219-d31d-4d11-b472-78d252bb887e'
+api_key = 'RGAPI-ddba9b15-5509-4fb3-a2c4-d1ca69f2c9d1'
 lol_watcher = LolWatcher(api_key)
 region = 'EUW1'
 
