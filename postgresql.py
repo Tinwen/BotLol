@@ -1,9 +1,13 @@
+import json
+
 import psycopg2
 
-HOST = "localhost"
-USER = "tinwen"
-PASSWORD = "45336+fssdfg"
-DATABASE = "botlol"
+with open("keys.json") as json_data_file:
+    file = json.load(json_data_file)
+    PASSWORD = file["postgres"]["pwd"]
+    HOST = file["postgres"]["host"]
+    USER = file["postgres"]["user"]
+    DATABASE = file["postgres"]["dbName"]
 
 conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (HOST, DATABASE, USER, PASSWORD))
 cur = conn.cursor()

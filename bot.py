@@ -1,15 +1,16 @@
 import discord
 from discord.ext import commands
+import json
 
 import lolRank
 import postgresql
 
 bot = commands.Bot(command_prefix='!')
 
-# Token discord
-token = "Nzk1NTg3MjI2MDk5OTA4NjU5.X_LiVw.nhUhkoAoajBRFZwzglEIH9JcRUA"
-
-tableName = "PIPIGANG"
+with open("keys.json") as json_data_file:
+    file = json.load(json_data_file)
+    token = file["discord"]["token"]
+    tableName = file["tableName"]
 
 urlOPGG = "https://euw.op.gg/summoner/userName="
 

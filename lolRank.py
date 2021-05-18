@@ -1,6 +1,10 @@
 from riotwatcher import LolWatcher
+import json
 
-api_key = 'RGAPI-ddba9b15-5509-4fb3-a2c4-d1ca69f2c9d1'
+with open("keys.json") as json_data_file:
+    file = json.load(json_data_file)
+    api_key = file["riot"]["token"]
+
 lol_watcher = LolWatcher(api_key)
 region = 'EUW1'
 
