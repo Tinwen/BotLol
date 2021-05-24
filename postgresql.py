@@ -15,19 +15,20 @@ cur = conn.cursor()
 
 def createTable(tableName):
     sqlText = "CREATE TABLE IF NOT EXISTS " + tableName + "(" \
-                                                          "pseudo VARCHAR PRIMARY KEY" \
+                                                          "pseudo VARCHAR," \
+                                                          "pseudoUpper VARCHAR PRIMARY KEY" \
                                                           ")"
     cur.execute(sqlText)
 
 
 def insert(tableName, pseudo):
-    sql = "INSERT INTO " + tableName + " VALUES ('" + pseudo + "')"
+    sql = "INSERT INTO " + tableName + " VALUES ('" + pseudo + "','" + pseudo.upper() + "')"
     cur.execute(sql)
     conn.commit()
 
 
 def delete(tableName, pseudo):
-    sql = "DELETE FROM  " + tableName + " WHERE pseudo='" + pseudo + "'"
+    sql = "DELETE FROM  " + tableName + " WHERE pseudoUpper='" + pseudo.upper() + "'"
     cur.execute(sql)
     conn.commit()
 
