@@ -1,0 +1,10 @@
+[Unit]
+Description=League of Legend bot
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/discord/pipigang/BotLol
+ExecStart=python3 /home/pi/discord/pipigang/BotLol/bot.py
+
+[Install]
+WantedBy=multi-user.target
