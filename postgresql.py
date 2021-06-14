@@ -2,6 +2,7 @@ import json
 
 import psycopg2
 
+print("slt")
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
     PASSWORD = file["postgres"]["pwd"]

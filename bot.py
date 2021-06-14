@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='!')
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
     token = file["discord"]["token"]
-    tableName = file["tableName"]
+    tableName = file["tableName"]+str("oui")
 
 urlOPGG = "https://euw.op.gg/summoner/userName="
 
