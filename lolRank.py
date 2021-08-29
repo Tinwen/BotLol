@@ -1,5 +1,8 @@
 from riotwatcher import LolWatcher
 import json
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',filename='example.log')
 
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
@@ -34,6 +37,10 @@ def stats(pseudo, isFlex=False):
                                 queueType)) + ". ( **" + str(winRate) + " %** for *" + str(totalGame) + " games* )\n"
         if not found:
             res = "Not enough ranked game played on this account " + str(pseudo) + ".\n"
-    except:
+    except Exception as inst:
+        logging.error(inst)
         res = "Invalid/Non-existing username ( " + pseudo + " )\n"
     return res, winRate
+
+
+print(stats("Tinwen"))
