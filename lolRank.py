@@ -41,6 +41,3 @@ def stats(pseudo, isFlex=False):
         logging.error(inst)
         res = "Invalid/Non-existing username ( " + pseudo + " )\n"
     return res, winRate
-
-
-print(stats("Tinwen"))
