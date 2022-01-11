@@ -2,7 +2,7 @@ from riotwatcher import LolWatcher
 import json
 import logging
 
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',filename='example.log')
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename='example.log')
 
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
@@ -13,31 +13,51 @@ region = 'EUW1'
 
 
 def stats(pseudo, isFlex=False):
-    res = ""
-    rankedType = "RANKED_SOLO_5x5"
-    queueType = "Solo/Duo Q"
-    winRate = 0
-    found = False
+    player = Player(pseudo)
+    player.queueType = "RANKED_SOLO_5x5"
     if isFlex:
-        rankedType = "RANKED_FLEX_SR"
-        queueType = "Flex"
+        player.queueType = "RANKED_FLEX_SR"
     try:
-        summoners = lol_watcher.summoner.by_name(region, pseudo)  # can throw error here (invalid pseudo)
+        summoners = lol_watcher.summoner.by_name(region, pseudo)
         ranked_stats = lol_watcher.league.by_summoner(region, summoners['id'])
         if ranked_stats is not None and len(ranked_stats) > 0:
             for i in range(len(ranked_stats)):
-                if ranked_stats[i]["queueType"] == rankedType:
-                    found = True
-                    totalGame = int(ranked_stats[i]["wins"]) + int(ranked_stats[i]["losses"])
-                    winRate = round(int(ranked_stats[i]["wins"]) / totalGame * 100, 2)
-                    res += (str(ranked_stats[i]["summonerName"]) +
-                            " is currently **" + str(ranked_stats[i]["tier"]).capitalize() + " " +
-                            str(ranked_stats[i]["rank"]) + "** (" + str(
-                                ranked_stats[i]["leaguePoints"]) + " LP) in " + str(
-                                queueType)) + ". ( **" + str(winRate) + " %** for *" + str(totalGame) + " games* )\n"
-        if not found:
-            res = "Not enough ranked game played on this account " + str(pseudo) + ".\n"
-    except Exception as inst:
-        logging.error(inst)
-        res = "Invalid/Non-existing username ( " + pseudo + " )\n"
-    return res, winRate
+                if ranked_stats[i]["queueType"] == player.queueType:
+                    player.found = True
+                    player.rank = ranked_stats[i]["rank"]
+                    player.tier = ranked_stats[i]["tier"]
+                    player.leaguePoints = ranked_stats[i]["leaguePoints"]
+                    player.nbGame = int(ranked_stats[i]["wins"]) + int(ranked_stats[i]["losses"])
+                    player.winRate = round(int(ranked_stats[i]["wins"]) / player.nbGame * 100, 2)
+    except:
+        player.exist = False
+    finally:
+        return player
+
+
+class Player:
+    def __init__(self, pseudo):
+        self.pseudo = pseudo
+        self.found = False
+        self.leaguePoints = 0
+        self.queueType = "RANKED_SOLO_5x5"
+        self.winRate = 0
+        self.nbGame = 0
+        self.rank = ""
+        self.tier = ""
+        self.exist = True
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        if not self.found:
+            if self.exist:
+                return "Not enough ranked game played on this account " + self.pseudo + "."
+            else:
+                return "Invalid/Non-existing username (" + self.pseudo + ")."
+        else:
+            queueName = "Solo/Duo Q" if self.queueType == "RANKED_SOLO_5x5" else "Flex"
+            return self.pseudo + " is currently **" + self.tier.capitalize() + " " + self.rank + "** (" + str(
+                self.leaguePoints) + " LP) in " + queueName + ". ( **" + str(
+                self.winRate) + " %** for *" + str(self.nbGame) + " games*)"

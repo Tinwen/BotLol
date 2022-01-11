@@ -34,7 +34,7 @@ def delete(tableName, pseudo):
 
 
 def getAllPseudo(tableName):
-    sql = "SELECT * FROM " + tableName
+    sql = "SELECT pseudo FROM " + tableName
     cur.execute(sql)
     result = cur.fetchall()
     final_result = []

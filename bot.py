@@ -1,6 +1,7 @@
+import json
+
 import discord
 from discord.ext import commands
-import json
 
 import lolRank
 import postgresql
@@ -12,40 +13,23 @@ with open("keys.json") as json_data_file:
     token = file["discord"]["token"]
     tableName = file["tableName"]
 
-urlOPGG = "https://euw.op.gg/summoner/userName="
 
 @bot.command()
 async def rank(ctx, *args):
-    msg = ""
-    players = postgresql.getAllPseudo(tableName)
-    if len(args) != 0:
-        msg, winRate = lolRank.stats(" ".join(args))
-    elif len(players) == 0:
-        msg = "No pseudo found in db add them before trying to do !rank"
-    else:
-        msg += sortByWinRate(players)
-    await ctx.send(msg)
+    message = await ctx.send("Processing data...")
+    await message.edit(content=getMessage(args, False))
 
 
 @bot.command()
 async def flex(ctx, *args):
-    msg = ""
-    players = postgresql.getAllPseudo(tableName)
-    if len(args) != 0:
-        msg, winRate = lolRank.stats(" ".join(args), True)
-    elif len(players) == 0:
-        msg = "No pseudo found in db add them before trying to do !flex"
-    else:
-        msg += sortByWinRate(players, True)
-
-    await ctx.send(msg)
+    message = await ctx.send("Processing data...")
+    await message.edit(content=getMessage(args, True))
 
 
 @bot.event
 async def on_ready():
-    print("Connected")
     postgresql.createTable(tableName)
-    await bot.change_presence(status=discord.Status.idle)
+    await bot.change_presence(status=discord.Status.online)
 
 
 @bot.command()
@@ -77,23 +61,6 @@ async def delete(ctx, *args):
 
 
 @bot.command()
-async def opgg(ctx, *args):
-    msg = ""
-    players = postgresql.getAllPseudo(tableName)
-    if len(args) != 0:
-        pseudo = " ".join(args).replace(" ", "+")
-        msg = "**" + str(" ".join(args)) + "** : " + urlOPGG + str(pseudo) + "\n"
-    elif len(players) == 0:
-        msg = "No pseudo found in database"
-    else:
-        for i in range(len(players)):
-            pseudo = players[i].replace(" ", "+")
-            msg += "**" + str(players[i]) + "** : " + urlOPGG + str(pseudo) + "\n"
-
-    await ctx.send(msg)
-
-
-@bot.command()
 async def h(ctx):
     msg = "- !rank <pseudo> => pseudo is optional\n" \
           "- !flex <pseudo> => pseudo is optional\n" \
@@ -104,19 +71,26 @@ async def h(ctx):
 
 
 def sortByWinRate(pseudo, isFlex=False):
-    res = dict()
-    result = ""
+    players = []
     for item in pseudo:
-        stats, winRate = lolRank.stats(item, isFlex)
-        res[stats] = winRate
-    res = {k: v for k, v in sorted(res.items(), key=lambda item: item[1])}
-    t = []
-    for item in list(res.items()):
-        t.append(item[0])
-    t.reverse()
-    for msg in t:
-        result += msg
-    return result
+        players.append(lolRank.stats(item, isFlex))
+    players.sort(key=lambda x: x.winRate, reverse=True)
+    result = []
+    for player in players:
+        result.append(player.__str__())
+    return "\n".join(result)
+
+
+def getMessage(args, isFlex=False):
+    players = postgresql.getAllPseudo(tableName)
+    if len(args) != 0:
+        msg = lolRank.stats(" ".join(args), isFlex).__str__()
+    elif len(players) == 0:
+        msg = "No pseudo found in db add them before trying to do " + "!flex" if isFlex else "!rank"
+    else:
+        msg = sortByWinRate(players, isFlex)
+
+    return msg
 
 
 bot.run(token)
