@@ -33,6 +33,19 @@ async def on_ready():
 
 
 @bot.command()
+async def update(ctx, *args):
+    if len(args) != 2:
+        message = "Only 2 arguments expected !"
+    else:
+        pseudoToDelete = args[0]
+        pseudoToInsert = args[1]
+        postgresql.delete(tableName, pseudoToDelete)
+        postgresql.insert(tableName, pseudoToInsert)
+        message = "Pseudo " + pseudoToDelete + " updated to " + pseudoToInsert + "."
+    await ctx.send(message)
+
+
+@bot.command()
 async def add(ctx, *args):
     pseudo = " ".join(args)
     if len(args) == 0:
