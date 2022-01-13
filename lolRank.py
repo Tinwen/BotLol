@@ -53,11 +53,11 @@ class Player:
     def __str__(self):
         if not self.found:
             if self.exist:
-                return "Not enough ranked game played on this account __" + self.pseudo + "__."
+                return "Not enough ranked game played on this account ***" + self.pseudo + "***."
             else:
                 return "Invalid/Non-existing username (__" + self.pseudo + "__)."
         else:
             queueName = "Solo/Duo Q" if self.queueType == "RANKED_SOLO_5x5" else "Flex"
-            return "__"+self.pseudo + "__ is currently **" + self.tier.capitalize() + " " + self.rank + "** (" + str(
+            return "***"+self.pseudo + "*** is currently **" + self.tier.capitalize() + " " + self.rank + "** (" + str(
                 self.leaguePoints) + " LP) in " + queueName + ". ( **" + str(
                 self.winRate) + " %** for *" + str(self.nbGame) + " games*)"
