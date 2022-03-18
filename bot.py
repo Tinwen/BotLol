@@ -11,7 +11,6 @@ bot = commands.Bot(command_prefix='!')
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
     token = file["discord"]["token"]
-    tableName = file["tableName"]
 
 
 @bot.command()
@@ -28,7 +27,7 @@ async def flex(ctx, *args):
 
 @bot.event
 async def on_ready():
-    postgresql.createTable(tableName)
+    postgresql.createTable()
     await bot.change_presence(status=discord.Status.online)
 
 
@@ -39,8 +38,8 @@ async def update(ctx, *args):
     else:
         pseudoToDelete = args[0]
         pseudoToInsert = args[1]
-        postgresql.delete(tableName, pseudoToDelete)
-        postgresql.insert(tableName, pseudoToInsert)
+        postgresql.delete(pseudoToDelete)
+        postgresql.insert(pseudoToInsert)
         message = "Pseudo " + pseudoToDelete + " updated to " + pseudoToInsert + "."
     await ctx.send(message)
 
@@ -52,7 +51,7 @@ async def add(ctx, *args):
         msg = "Invalid value"
     else:
         try:
-            postgresql.insert(tableName, pseudo)
+            postgresql.insert(pseudo)
             msg = "Successfully added in database"
         except:
             msg = pseudo + " already in database"
@@ -66,7 +65,7 @@ async def delete(ctx, *args):
         msg = "Invalid value"
     else:
         try:
-            postgresql.delete(tableName, pseudo)
+            postgresql.delete(pseudo)
             msg = "Successfully removed from database"
         except:
             msg = pseudo + " doesn't exist in database"
@@ -95,7 +94,7 @@ def sortByWinRate(pseudo, isFlex=False):
 
 
 def getMessage(args, isFlex=False):
-    players = postgresql.getAllPseudo(tableName)
+    players = postgresql.getAllPseudo()
     if len(args) != 0:
         msg = lolRank.stats(" ".join(args), isFlex).__str__()
     elif len(players) == 0:
