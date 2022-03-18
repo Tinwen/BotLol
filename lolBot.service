@@ -2,9 +2,9 @@
 Description=League of Legend bot
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/discord/pipigang/BotLol
-ExecStart=python3 /home/pi/discord/pipigang/BotLol/bot.py
+User=tinwen
+WorkingDirectory=/home/tinwen/projects/BotLol
+ExecStart=python3 /home/tinwen/projectsBotLol/bot.py
 
 [Install]
 WantedBy=multi-user.target
