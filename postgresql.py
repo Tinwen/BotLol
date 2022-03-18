@@ -8,12 +8,13 @@ with open("keys.json") as json_data_file:
     HOST = file["postgres"]["host"]
     USER = file["postgres"]["user"]
     DATABASE = file["postgres"]["dbName"]
+    tableName = file["postgres"]["tableName"]
 
 conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s" % (HOST, DATABASE, USER, PASSWORD))
 cur = conn.cursor()
 
 
-def createTable(tableName):
+def createTable():
     sqlText = "CREATE TABLE IF NOT EXISTS " + tableName + "(" \
                                                           "pseudo VARCHAR," \
                                                           "pseudoUpper VARCHAR PRIMARY KEY" \
@@ -21,19 +22,19 @@ def createTable(tableName):
     cur.execute(sqlText)
 
 
-def insert(tableName, pseudo):
+def insert(pseudo):
     sql = "INSERT INTO " + tableName + " VALUES ('" + pseudo + "','" + pseudo.upper() + "')"
     cur.execute(sql)
     conn.commit()
 
 
-def delete(tableName, pseudo):
+def delete(pseudo):
     sql = "DELETE FROM  " + tableName + " WHERE pseudoUpper='" + pseudo.upper() + "'"
     cur.execute(sql)
     conn.commit()
 
 
-def getAllPseudo(tableName):
+def getAllPseudo():
     sql = "SELECT pseudo FROM " + tableName
     cur.execute(sql)
     result = cur.fetchall()
