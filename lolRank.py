@@ -1,8 +1,5 @@
 from riotwatcher import LolWatcher
 import json
-import logging
-
-logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename='example.log')
 
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
