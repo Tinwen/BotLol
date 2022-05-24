@@ -5,7 +5,8 @@ from discord.ext import commands
 
 import lolRank
 import postgresql
-
+from processPlayer import Sort, processPlayers
+    
 bot = commands.Bot(command_prefix='!')
 
 with open("keys.json") as json_data_file:
@@ -18,6 +19,10 @@ async def rank(ctx, *args):
     message = await ctx.send("Processing data...")
     await message.edit(content=getMessage(args, False))
 
+@bot.command()
+async def chomage(ctx, *args):
+    message = await ctx.send("Processing data...")
+    await message.edit(content=getMessage(args, Sort.GAME, False))
 
 @bot.command()
 async def flex(ctx, *args):
@@ -81,28 +86,16 @@ async def h(ctx):
           "- !opgg <pseudo> => pseudo is optional"
     await ctx.send(msg)
 
-
-def sortByWinRate(pseudo, isFlex=False):
-    players = []
-    for item in pseudo:
-        players.append(lolRank.stats(item, isFlex))
-    players.sort(key=lambda x: x.winRate, reverse=True)
-    result = []
-    for player in players:
-        result.append(player.__str__())
-    return "\n".join(result)
-
-
-def getMessage(args, isFlex=False):
-    players = postgresql.getAllPseudo()
+def getMessage(args, sortType = Sort.WINRATE ,isFlex=False):
     if len(args) != 0:
         msg = lolRank.stats(" ".join(args), isFlex).__str__()
-    elif len(players) == 0:
-        msg = "No pseudo found in db add them before trying to do " + "!flex" if isFlex else "!rank"
     else:
-        msg = sortByWinRate(players, isFlex)
+        players = postgresql.getAllPseudo()
+        if len(players) == 0:
+            msg = "No pseudo found in db add them before trying to do " + "!flex" if isFlex else "!rank"
+        else:
+            msg = processPlayers(players, sortType, isFlex)
 
     return msg
-
 
 bot.run(token)
