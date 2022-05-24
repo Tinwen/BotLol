@@ -83,7 +83,9 @@ async def h(ctx):
           "- !flex <pseudo> => pseudo is optional\n" \
           "- !add <pseudo> => add a pseudo in database\n" \
           "- !delete <pseudo> => remove a pseudo from database\n" \
-          "- !opgg <pseudo> => pseudo is optional"
+          "- !opgg <pseudo> => pseudo is optional\n" \
+          "- !chomage <pseudo> => same as !rank/!flex but sort by game amount" 
+
     await ctx.send(msg)
 
 def getMessage(args, sortType = Sort.WINRATE ,isFlex=False):
