@@ -1,6 +1,6 @@
 import enum
 import lolRank
-import postgresql
+import time
 
 class Sort(enum.Enum):
     WINRATE = 0

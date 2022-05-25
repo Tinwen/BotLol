@@ -1,7 +1,6 @@
-from distutils import extension
 import json
 
-from psycopg2 import connect, extensions, sql
+from psycopg2 import connect, extensions
 
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
