@@ -17,7 +17,7 @@ with open("keys.json") as json_data_file:
 @bot.command()
 async def rank(ctx, *args):
     message = await ctx.send("Processing data...")
-    await message.edit(content=getMessage(args, False))
+    await message.edit(content=getMessage(args, Sort.WINRATE, False))
 
 @bot.command()
 async def chomage(ctx, *args):
@@ -27,7 +27,7 @@ async def chomage(ctx, *args):
 @bot.command()
 async def flex(ctx, *args):
     message = await ctx.send("Processing data...")
-    await message.edit(content=getMessage(args, True))
+    await message.edit(content=getMessage(args, Sort.WINRATE, True))
 
 
 @bot.event
