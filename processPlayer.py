@@ -40,4 +40,4 @@ def sortByElo(players):
   return players
 
 
-print(processPlayers(postgresql.getAllPseudo(), Sort.GAME, False))
+# print(processPlayers(postgresql.getAllPseudo(), Sort.GAME, False))
