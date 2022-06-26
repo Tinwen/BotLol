@@ -17,22 +17,21 @@ with open("keys.json") as json_data_file:
 @bot.command()
 async def rank(ctx, *args):
     message = await ctx.send("Processing data...")
-    await message.edit(content=getMessage(args, Sort.WINRATE, False))
+    await message.edit(content=getMessage(str(ctx.message.guild.id), args, Sort.WINRATE, False))
 
 @bot.command()
 async def chomage(ctx, *args):
     message = await ctx.send("Processing data...")
-    await message.edit(content=getMessage(args, Sort.GAME, False))
+    await message.edit(content=getMessage(str(ctx.message.guild.id),args, Sort.GAME, False))
 
 @bot.command()
 async def flex(ctx, *args):
     message = await ctx.send("Processing data...")
-    await message.edit(content=getMessage(args, Sort.WINRATE, True))
+    await message.edit(content=getMessage(str(ctx.message.guild.id),args, Sort.WINRATE, True))
 
 
 @bot.event
 async def on_ready():
-    postgresql.createTable()
     await bot.change_presence(status=discord.Status.online)
 
 
@@ -43,8 +42,8 @@ async def update(ctx, *args):
     else:
         pseudoToDelete = args[0]
         pseudoToInsert = args[1]
-        postgresql.delete(pseudoToDelete)
-        postgresql.insert(pseudoToInsert)
+        postgresql.delete(pseudoToDelete, str(ctx.message.guild.id))
+        postgresql.insert(pseudoToInsert, str(ctx.message.guild.id))
         message = "Pseudo " + pseudoToDelete + " updated to " + pseudoToInsert + "."
     await ctx.send(message)
 
@@ -56,7 +55,7 @@ async def add(ctx, *args):
         msg = "Invalid value"
     else:
         try:
-            postgresql.insert(pseudo)
+            postgresql.insert(pseudo, str(ctx.message.guild.id))
             msg = "Successfully added in database"
         except:
             msg = pseudo + " already in database"
@@ -70,7 +69,7 @@ async def delete(ctx, *args):
         msg = "Invalid value"
     else:
         try:
-            postgresql.delete(pseudo)
+            postgresql.delete(pseudo, str(ctx.message.guild.id))
             msg = "Successfully removed from database"
         except:
             msg = pseudo + " doesn't exist in database"
@@ -88,13 +87,14 @@ async def h(ctx):
 
     await ctx.send(msg)
 
-def getMessage(args, sortType = Sort.WINRATE ,isFlex=False):
+def getMessage(serverId, args, sortType = Sort.WINRATE ,isFlex=False):
     if len(args) != 0:
         msg = lolRank.stats(" ".join(args), isFlex).__str__()
     else:
-        players = postgresql.getAllPseudo()
+        players = postgresql.getAllPseudo(serverId)
         if len(players) == 0:
-            msg = "No pseudo found in db add them before trying to do " + "!flex" if isFlex else "!rank"
+            msg = "No pseudo found in db add them before trying to do "
+            msg+= "!flex" if isFlex else "!rank"
         else:
             msg = processPlayers(players, sortType, isFlex)
 
