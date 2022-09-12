@@ -7,7 +7,29 @@ import lolRank
 import postgresql
 from processPlayer import Sort, processPlayers
     
-bot = commands.Bot(command_prefix='!')
+
+# from discord import app_commands
+# class aclient(discord.Client):
+#     def __init__(self):
+#         super().__init__(intents=discord.Intents.default())
+#         self.synced = False
+
+#     async def on_ready(self):
+#         await self.wait_until_ready()
+#         if not self.synced:
+#             await tree.sync()
+#             self.synced = True
+
+# client = aclient()
+# tree = app_commands.CommandTree(client)
+
+# @tree.command(name="rank", description="Display rank of all user registered")
+# async def self(interaction: discord.Interaction):
+#     await interaction.response.send_message("Hello")
+# client.run(token)
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='!',intents=intents)
 
 with open("keys.json") as json_data_file:
     file = json.load(json_data_file)
